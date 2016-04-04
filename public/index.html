@@ -199,7 +199,7 @@
                             <div class="mail-from">{{ mail._from }}
                                 <br><span>{{ new Date(mail.date) }}</span></div>
                             <div class="mail-body">
-                                {{{ decodeURIComponent(mail._body) }}}
+                                {{{ decodeURIComponent(mail.body) }}}
                             </div>
                             <div v-for="att in mail._attachment"><a href="data:{{ att.contentType }};base64,{{ att.content }}">{{ att.fileName }}</a></div>
                         </div>
