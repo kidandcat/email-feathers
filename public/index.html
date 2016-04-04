@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="/font-awesome.min.css">
+    <script src="tinymce.min.js"></script>
+    <style>
+        html {
+            background-color: #005ce6;
+            height: 100%;
+            width: 100%;
+        }
+        
+        .center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            background-color: #efeff5;
+            transform: translate(-50%, -50%);
+            padding: 30px;
+            padding-left: 80px;
+            padding-right: 80px;
+            border-radius: 20px;
+            font-size: 20px;
+            width: 20%;
+        }
+        
+        .mail-from {
+            padding: 15px;
+            color: green;
+            border: 1px solid green;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+        
+        .mail-from span {
+            font-size: 0.5em;
+        }
+        
+        .mail {
+            background-color: white;
+            margin: 80px;
+            padding: 100px;
+            border-radius: 10px;
+        }
+        
+        #title {
+            width: 100%;
+            display: inline-block;
+            font-size: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #0000b3;
+            font-weight: bold;
+        }
+        
+        .not-auth {
+            color: white;
+            background-color: red;
+            padding: 80px;
+            border-radius: 10px;
+            font-size: 60px;
+            text-align: center;
+        }
+        
+        .center input {
+            width: 90%;
+            margin-bottom: 10%;
+            border: none;
+            background: none;
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            outline: none;
+            color: #1a1aff;
+        }
+        
+        .new {
+            position: fixed;
+            left: 90%;
+            top: 10%;
+            transform: translate(-50%, -49%);
+            background: none;
+            color: white;
+            border: none;
+            background-color: deepskyblue;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 7px;
+            box-shadow: -9px 11px 12px 0px rgba(0, 0, 0, 0.75);
+            font-weight: bold;
+        }
+        
+        #editor {
+            width: 100%;
+            height: 70%;
+        }
+        
+        .modal-mask {
+            position: fixed;
+            z-index: 9998;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, .5);
+            display: table;
+            transition: opacity .3s ease;
+        }
+        
+        .modal-wrapper {
+            display: table-cell;
+            vertical-align: middle;
+        }
+        
+        .modal-container {
+            width: 70%;
+            height: 35em;
+            margin: 0px auto;
+            padding: 20px 30px;
+            background-color: #fff;
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+            transition: all .3s ease;
+            font-family: Helvetica, Arial, sans-serif;
+        }
+        
+        .modal-header h3 {
+            margin-top: 0;
+            color: green;
+        }
+        
+        .modal-body {
+            margin: 20px 0;
+            width: 100%;
+            height: 80%;
+        }
+        
+        .modal-default-button-ok {
+            background: none;
+            color: white;
+            border: none;
+            background-color: green;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 7px;
+            font-weight: bold;
+            float: right;
+            margin-left: 10px;
+        }
+        
+        .modal-default-button-ko {
+            background: none;
+            color: white;
+            border: none;
+            background-color: darkred;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 7px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .modal-enter,
+        .modal-leave {
+            opacity: 0;
+        }
+        
+        .modal-enter .modal-container,
+        .modal-leave .modal-container {
+            -webkit-transform: scale(1.1);
+            transform: scale(1.1);
+        }
+        
+        #check {
+            width: 10%;
+            display: inline-block;
+        }
+        
+        .checkLabel {
+            font-size: 14px;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <template v-if="logged">
+            <div id="block" class="centerMail">
+                <template v-if="auth">
+                    <button class="new" id="show-modal" @click="showModal = true" onclick="edit()">New email</button>
+                    <modal :show.sync="showModal"></modal>
+                    <template v-for="mail in mails">
+                        <div class="mail">
+                            <div class="mail-from">{{ mail._from }}
+                                <br><span>{{ new Date(mail.date) }}</span></div>
+                            <div class="mail-body">
+                                {{{ decodeURIComponent(mail._body) }}}
+                            </div>
+                            <div v-for="att in mail._attachment"><a href="data:{{ att.contentType }};base64,{{ att.content }}">{{ att.fileName }}</a></div>
+                        </div>
+                    </template>
+                </template>
+                <template v-else>
+                    <div class="not-auth center">
+                        Not Authorized
+                    </div>
+                </template>
+            </div>
+        </template>
+        <template v-else>
+            <div id="block" class="center">
+                <div id="title">Login</div>
+                <input type="text" v-model="user" placeholder="User" v-on:keyup.enter="log" autofocus>
+                <input id="loginPassword" type="password" v-model="password" v-on:keyup.enter="log" placeholder="Password">
+                <input id="check" type="checkbox" v-model="stay"><span class="checkLabel">Stay logged</span>
+            </div>
+        </template>
+    </div>
+</body>
+<script src="/vue.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/feathers.js"></script>
+<script src="/vue-resource.min.js"></script>
+<script src="/vue-router.min.js"></script>
+<script type="x/template" id="modal-template">
+    <div class="modal-mask" v-show="show" transition="modal">
+        <div class="modal-wrapper">
+            <div class="modal-container">
+
+                <div class="modal-header">
+                    <slot name="header">
+                        <span>To:</span>
+                        <input id="to" type="text">
+                        <span>Subject:</span>
+                        <input id="subject" type="text">
+                    </slot>
+                </div>
+
+                <div class="modal-body">
+                    <slot name="body">
+                        <div id="editor">
+                        </div>
+                    </slot>
+                </div>
+
+                <div class="modal-footer">
+                    <slot name="footer">
+                        <button class="modal-default-button-ko" @click="show = false">
+                            Cancel
+                        </button>
+                        <button class="modal-default-button-ok" @click="show = false" onclick="logn.send()">
+                            Send
+                        </button>
+                    </slot>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script>
+    Vue.component('modal', {
+            template: '#modal-template',
+            props: {
+                show: {
+                    type: Boolean,
+                    required: true,
+                    twoWay: true    
+                }
+            }
+        });
+    
+    
+        var logn = new Vue({
+            el: '#app',
+            data: {
+                user: '',
+                password: '',
+                logged: false,
+                mails: '',
+                stay: false,
+                auth: true,
+                token: '',
+                showModal: false
+            },
+            methods: {
+                log: function() {
+                    var self = this;
+                    if(self.stay){
+                         localStorage.setItem('galaxU', self.user);
+                         localStorage.setItem('galaxP', self.password);
+                    }else{
+                         localStorage.removeItem('galaxU', self.user);
+                         localStorage.removeItem('galaxP', self.password);
+                    }
+                    app.authenticate({
+                        type: 'local',
+                        'email': self.user,
+                        'password': self.password
+                    }).then(function(result){
+                        self.logged = true;
+                        self.emails();
+                    }).catch(function(error){
+                        console.error('Error authenticating!', error);
+                    });
+                },
+                emails: function(){
+                    var self = this;
+                    var variable = emailService.find().then(function(result){
+                        result.data.forEach(function(ss){
+                            ss.attachment = JSON.parse(ss.attachment);
+                        });
+                        self.mails = result.data;
+                    }).catch(function(error){
+                        console.error('Error!', error);
+                    });
+                },
+                register: function(){
+                    var self = this;
+                    userService.create({
+                        email: self.user,
+                        password: self.password
+                    }).then(function(result){
+                        console.log('registered');
+                        console.log(result);
+                    }).catch(function(error){
+                        console.error('Error!', error);
+                    });
+                },
+                send: function(){
+                    var to = document.querySelector('#to').value;
+                    var from = this.user + '@galax.be';
+                    var subject = document.querySelector('#subject').value;
+                    var body = tinyMCE.editors[0].getContent();
+                    Vue.http.post('/new/' + this.token, {to: to, from: from, subject: subject, body: body}, {emulateJSON: true}).then(function(res){
+                         console.log(res.data);
+                    }, function(err){
+                         console.log(err);
+                    });
+                }
+            }
+        });
+        
+        
+        var socket = io();
+        var app = feathers()
+        .configure(feathers.socketio(socket))
+        .configure(feathers.hooks())
+        .configure(feathers.authentication({ storage: window.localStorage }));
+        
+        //SERVICES
+        var emailService = app.service('emails');
+        var userService = app.service('users');
+        
+        
+        
+        
+        
+        if(localStorage.getItem('galaxU')){
+            logn.user = localStorage.getItem('galaxU');
+        }
+        if(localStorage.getItem('galaxP')){
+            logn.password = localStorage.getItem('galaxP');
+            logn.stay = true;
+            document.querySelector('#loginPassword').focus();
+        }
+        function edit(){
+            tinymce.init({
+                selector: '#editor',
+                height: 320,
+                plugins: [
+                    'advlist autolink lists link image charmap print preview anchor',
+                    'searchreplace visualblocks code fullscreen',
+                    'insertdatetime media table contextmenu paste code'
+                ],
+                toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+                content_css: [
+                    '//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
+                    '//www.tinymce.com/css/codepen.min.css'
+                ]
+            });
+        }
+
+</script>
+
+</html>

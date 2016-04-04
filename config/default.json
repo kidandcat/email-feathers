@@ -1,0 +1,13 @@
+{
+  "host": "localhost",
+  "port": 3030,
+  "mysql": "mysql://admin:3corazoness.@galax.be:3306/emailFeathers",
+  "public": "../public/",
+  "auth": {
+    "idField": "id",
+    "token": {
+      "secret": "ZxSak3DUhNkRjC9NioAAUodMY23l0Ic59lVry3++xKvmWQKY4VgWMgJif2P6CY5YHJy5LmLICJUVmQPdAd+OYw=="
+    },
+    "local": {}
+  }
+}
