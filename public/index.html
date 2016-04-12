@@ -316,6 +316,7 @@
                         });
                         self.mails = result.data;
                     }).catch(function(error){
+                        console.log(error);
                         console.error('Error!', error);
                     });
                 },
