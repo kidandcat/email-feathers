@@ -201,7 +201,7 @@
                             <div class="mail-body">
                                 {{{ decodeURIComponent(mail.body) }}}
                             </div>
-                            <div v-for="att in mail._attachment"><a href="data:{{ att.contentType }};base64,{{ att.content }}">{{ att.fileName }}</a></div>
+                            <div v-for="att in mail.attachment"><a href="data:{{ att.contentType }};base64,{{ att.content }}">{{ att.fileName }}</a></div>
                         </div>
                     </template>
                 </template>
@@ -316,7 +316,6 @@
                                 ss.attachment = JSON.parse(ss.attachment);
                             }catch(e){
                                 console.log(e);
-                                console.log(ss.attachment);
                             }
                         });
                         self.mails = result.data;
