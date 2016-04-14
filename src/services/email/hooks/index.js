@@ -10,7 +10,9 @@ exports.before = {
     auth.populateUser(),
     auth.restrictToAuthenticated()
   ],
-  find: [],
+  find: [
+    globalHooks.orderByDate()
+  ],
   get: [],
   create: [],
   update: [],
