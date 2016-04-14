@@ -15,7 +15,7 @@ exports.myHook = function (options) {
 
 exports.orderByDate = function (options) {
   return function (hook) {
-    hook.params.query: {
+    hook.params.query = {
       $sort: { date: -1 }
     }
   };
