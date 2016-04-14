@@ -312,11 +312,15 @@
                     var self = this;
                     var variable = emailService.find().then(function(result){
                         result.data.forEach(function(ss){
-                            ss.attachment = JSON.parse(ss.attachment);
+                            try{
+                                ss.attachment = JSON.parse(ss.attachment);
+                            }catch(e){
+                                console.log(e);
+                                console.log(ss.attachment);
+                            }
                         });
                         self.mails = result.data;
                     }).catch(function(error){
-                        console.log(error);
                         console.error('Error!', error);
                     });
                 },
