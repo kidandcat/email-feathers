@@ -339,13 +339,20 @@
                 },
                 send: function(){
                     var to = document.querySelector('#to').value;
-                    var from = this.user + '@galax.be';
+                    var from = this.user;
                     var subject = document.querySelector('#subject').value;
                     var body = tinyMCE.editors[0].getContent();
-                    Vue.http.post('/new/' + this.token, {to: to, from: from, subject: subject, body: body}, {emulateJSON: true}).then(function(res){
-                         console.log(res.data);
-                    }, function(err){
-                         console.log(err);
+                    sentEmailService.create({
+                        date: new Date().toLocaleString(),
+                        _from: from,
+                        _to: to,
+                        subject: subject,
+                        body: body
+                    }).then(function(result){
+                        console.log('registered');
+                        console.log(result);
+                    }).catch(function(error){
+                        console.error('Error!', error);
                     });
                 }
             }
@@ -360,6 +367,7 @@
         
         //SERVICES
         var emailService = app.service('emails');
+        var sentEmailService = app.service('sentMails');
         var userService = app.service('users');
         
         
