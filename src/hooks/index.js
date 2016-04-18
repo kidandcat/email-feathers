@@ -20,8 +20,6 @@ exports.sendMail = function(options) {
     };
 
     return function(hook) {
-        var data = querystring.stringify(hook.data);
-        
         if (hook.data._to.split('@')[1] == 'galax.be') {
             connection.query("SELECT * FROM users WHERE nick = '" + hook.data._to.split('@')[0] + "'", function(err, rows, fields) {
                 if (err) {
@@ -45,6 +43,10 @@ exports.sendMail = function(options) {
                     console.log("body: " + chunk);
                 });
             });
+            hook.data.from = hook.data._from;
+            hook.data.to = hook.data._to;
+            var data = querystring.stringify(hook.data);
+            
             req2.write(data);
             req2.end();
         }
