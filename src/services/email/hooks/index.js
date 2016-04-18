@@ -8,11 +8,11 @@ exports.before = {
   all: [
     auth.verifyToken(),
     auth.populateUser(),
-    auth.restrictToAuthenticated(),
-    auth.restrictToOwner({ ownerField: '_to' })
+    auth.restrictToAuthenticated()
   ],
   find: [
-    globalHooks.orderByDate()
+    globalHooks.orderByDate(),
+    auth.queryWithCurrentUser({ idField: 'email', as: '_to' })
   ],
   get: [],
   create: [],

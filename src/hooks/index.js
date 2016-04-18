@@ -61,3 +61,10 @@ exports.orderByDate = function(options) {
         }
     };
 };
+
+
+exports.log = function(options) {
+    return function(hook) {
+        console.log(hook);
+    };
+};
