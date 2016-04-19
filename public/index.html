@@ -372,7 +372,10 @@
         var userService = app.service('users');
         
         
-        
+        setInterval(function(){
+            logn.emails();
+        },5000);
+
         
         
         if(localStorage.getItem('galaxU')){
